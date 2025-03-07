@@ -41,7 +41,6 @@ public class BFSSolver {
         return reconstructPath(maze, parent);
     }
 
-    // Méthode rendue publique et statique
     public static char[][] reconstructPath(Maze maze, Point[][] parent) {
         char[][] grid = maze.getGrid().clone();
         Point current = maze.getEnd();

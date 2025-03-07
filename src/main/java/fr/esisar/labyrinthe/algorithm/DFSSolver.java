@@ -37,6 +37,6 @@ public class DFSSolver {
             }
         }
 
-        return BFSSolver.reconstructPath(maze, parent); // Appel de la méthode publique
+        return BFSSolver.reconstructPath(maze, parent);
     }
 }

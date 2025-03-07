@@ -4,7 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.List;
 
 public class Maze {
     private final char[][] grid;
@@ -13,13 +13,13 @@ public class Maze {
     private final int rows;
     private final int cols;
 
-    // Chargement depuis un fichier
+    // Constructeur pour charger depuis un fichier
     public Maze(Path filePath) throws IOException {
         List<String> lines = Files.readAllLines(filePath);
         validateLines(lines);
 
         this.rows = lines.size();
-        this.cols = lines.get(0).length(); // Utilisation de get(0) au lieu de getFirst()
+        this.cols = lines.get(0).length();
         this.grid = new char[rows][cols];
         this.start = findPoint(lines, 'S');
         this.end = findPoint(lines, 'E');
@@ -32,19 +32,33 @@ public class Maze {
         }
     }
 
-    // Génération aléatoire
+    // Constructeur pour génération aléatoire
+    public Maze(char[][] grid, Point start, Point end) {
+        this.grid = grid;
+        this.rows = grid.length;
+        this.cols = grid[0].length;
+        this.start = start;
+        this.end = end;
+    }
+
+    // Nouveau constructeur pour initialiser un labyrinthe vide
     public Maze(int rows, int cols) {
-        this.rows = (rows % 2 == 0) ? rows - 1 : rows; // Taille impaire
-        this.cols = (cols % 2 == 0) ? cols - 1 : cols;
-        this.grid = generateGrid();
+        this.rows = rows;
+        this.cols = cols;
+        this.grid = new char[rows][cols];
         this.start = new Point(1, 1);
-        this.end = new Point(this.rows - 2, this.cols - 2);
+        this.end = new Point(rows - 2, cols - 2);
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                grid[i][j] = '#';
+            }
+        }
     }
 
     // Méthodes utilitaires
     private void validateLines(List<String> lines) throws IOException {
         if (lines.isEmpty()) throw new IOException("Fichier vide");
-        int firstLineLength = lines.get(0).length(); // Utilisation de get(0) au lieu de getFirst()
+        int firstLineLength = lines.get(0).length();
         for (String line : lines) {
             if (line.length() != firstLineLength) {
                 throw new IOException("Labyrinthe non rectangulaire");
@@ -61,41 +75,6 @@ public class Maze {
             }
         }
         throw new IOException("Point '" + target + "' introuvable");
-    }
-
-    private char[][] generateGrid() {
-        char[][] grid = new char[rows][cols];
-        for (char[] row : grid) Arrays.fill(row, '#');
-
-        Stack<Point> stack = new Stack<>();
-        Random rand = new Random();
-
-        // Point de départ
-        grid[start.x()][start.y()] = 'S';
-        stack.push(start);
-
-        int[][] directions = {{-2, 0}, {2, 0}, {0, -2}, {0, 2}};
-
-        while (!stack.isEmpty()) {
-            Point current = stack.pop();
-            List<int[]> shuffledDirs = Arrays.asList(directions);
-            Collections.shuffle(shuffledDirs, rand);
-
-            for (int[] dir : shuffledDirs) {
-                int newX = current.x() + dir[0];
-                int newY = current.y() + dir[1];
-
-                if (newX >= 0 && newX < rows && newY >= 0 && newY < cols && grid[newX][newY] == '#') {
-                    grid[current.x() + dir[0] / 2][current.y() + dir[1] / 2] = '=';
-                    grid[newX][newY] = '=';
-                    stack.push(current);
-                    stack.push(new Point(newX, newY));
-                }
-            }
-        }
-
-        grid[end.x()][end.y()] = 'E';
-        return grid;
     }
 
     // Getters
