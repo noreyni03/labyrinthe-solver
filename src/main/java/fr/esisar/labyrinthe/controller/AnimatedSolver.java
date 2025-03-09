@@ -10,15 +10,49 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+/**
+ * Classe responsable de la résolution animée d'un labyrinthe.
+ * Utilise l'algorithme de parcours en largeur (BFS) pour trouver le chemin
+ * et anime le processus de recherche et de reconstruction du chemin sur un canvas.
+ */
 public class AnimatedSolver {
+    /**
+     * Directions possibles : haut, bas, gauche, droite.
+     */
     private static final int[][] DIRECTIONS = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+    /**
+     * Le labyrinthe à résoudre.
+     */
     private final Maze maze;
+    /**
+     * Le contexte graphique sur lequel dessiner.
+     */
     private final GraphicsContext gc;
+    /**
+     * La taille d'une cellule du labyrinthe en pixels.
+     */
     private final double cellSize;
+    /**
+     * Callback pour signaler la progression de la recherche.
+     */
     private final Consumer<Double> progressCallback;
+    /**
+     * Minuteur pour l'animation.
+     */
     private AnimationTimer timer;
+    /**
+     * Indique si un algorithme de résolution est en cours.
+     */
     private boolean isSolving = false;
 
+    /**
+     * Constructeur de la classe AnimatedSolver.
+     *
+     * @param maze             Le labyrinthe à résoudre.
+     * @param gc               Le contexte graphique sur lequel dessiner.
+     * @param cellSize         La taille d'une cellule du labyrinthe en pixels.
+     * @param progressCallback Callback pour signaler la progression de la recherche (entre 0.0 et 1.0).
+     */
     public AnimatedSolver(Maze maze, GraphicsContext gc, double cellSize, Consumer<Double> progressCallback) {
         this.maze = maze;
         this.gc = gc;
@@ -26,10 +60,17 @@ public class AnimatedSolver {
         this.progressCallback = progressCallback;
     }
 
+    /**
+     * Résout le labyrinthe en utilisant l'algorithme de parcours en largeur (BFS), avec une animation.
+     *
+     * @return Un CompletableFuture qui contiendra la grille résolue lorsque la résolution sera terminée.
+     *         La grille contiendra le chemin marqué avec des '+'.
+     * @throws IllegalStateException Si un autre algorithme de résolution est déjà en cours.
+     */
     public CompletableFuture<char[][]> solveBFS() {
         CompletableFuture<char[][]> future = new CompletableFuture<>();
         if (isSolving) {
-            future.completeExceptionally(new IllegalStateException("Already solving"));
+            future.completeExceptionally(new IllegalStateException("Un algorithme de résolution est déjà en cours."));
             return future;
         }
 
@@ -50,7 +91,7 @@ public class AnimatedSolver {
 
         timer = new AnimationTimer() {
             private long lastUpdate = 0;
-            private final long FRAME_DELAY = 30_000_000; // 30ms in nanoseconds
+            private final long FRAME_DELAY = 30_000_000; // 30ms en nanosecondes
 
             @Override
             public void handle(long now) {
@@ -67,13 +108,13 @@ public class AnimatedSolver {
                 Point current = queue.poll();
                 exploredCells.add(current);
 
-                // Visualization - show exploration
+                // Visualisation - afficher l'exploration
                 if (!current.equals(start) && !current.equals(end)) {
                     gc.setFill(Color.LIGHTBLUE);
                     gc.fillRect(current.y() * cellSize, current.x() * cellSize, cellSize, cellSize);
                 }
 
-                // Update progress
+                // Mettre à jour la progression
                 progressCallback.accept((double) exploredCells.size() / (rows * cols));
 
                 if (current.equals(end)) {
@@ -101,6 +142,14 @@ public class AnimatedSolver {
         return future;
     }
 
+    /**
+     * Reconstruit et anime le chemin à partir du tableau des parents (`parent`).
+     *
+     * @param parent  Tableau des parents pour reconstruire le chemin.
+     * @param end     Le point d'arrivée.
+     * @param future  Le CompletableFuture à compléter lorsque le chemin est reconstruit.
+     * @return Une copie de la grille avec le chemin marqué.
+     */
     private char[][] reconstructPathAnimated(Map<Point, Point> parent, Point end, CompletableFuture<char[][]> future) {
         char[][] grid = maze.getGrid().clone();
         for (int i = 0; i < grid.length; i++) {
@@ -110,7 +159,7 @@ public class AnimatedSolver {
         List<Point> path = new ArrayList<>();
         Point current = end;
 
-        // Build the path in reverse
+        // Construire le chemin en remontant de la fin vers le début
         while (parent.containsKey(current) && !current.equals(maze.getStart())) {
             path.add(current);
             current = parent.get(current);
@@ -118,7 +167,7 @@ public class AnimatedSolver {
 
         Collections.reverse(path);
 
-        // Create animation for path visualization
+        // Créer l'animation pour la visualisation du chemin
         final int[] index = {0};
         AnimationTimer pathTimer = new AnimationTimer() {
             private long lastUpdate = 0;
@@ -138,11 +187,11 @@ public class AnimatedSolver {
                 Point p = path.get(index[0]);
                 grid[p.x()][p.y()] = '+';
 
-                // Draw path segment
+                // Dessiner le segment du chemin
                 gc.setFill(Color.YELLOW);
                 gc.fillRect(p.y() * cellSize, p.x() * cellSize, cellSize, cellSize);
 
-                // Highlight start and end
+                // Mettre en évidence le début et la fin
                 gc.setFill(Color.GREEN);
                 gc.fillRect(maze.getStart().y() * cellSize, maze.getStart().x() * cellSize, cellSize, cellSize);
                 gc.setFill(Color.RED);
@@ -156,6 +205,9 @@ public class AnimatedSolver {
         return grid;
     }
 
+    /**
+     * Arrête l'animation en cours.
+     */
     public void stop() {
         if (timer != null) {
             timer.stop();

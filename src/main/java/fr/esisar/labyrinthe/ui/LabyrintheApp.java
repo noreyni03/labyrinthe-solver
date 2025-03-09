@@ -1,59 +1,50 @@
 package fr.esisar.labyrinthe.ui;
 
-import fr.esisar.labyrinthe.algorithm.BFSSolver;
-import fr.esisar.labyrinthe.algorithm.DFSSolver;
-import fr.esisar.labyrinthe.model.Maze;
 import javafx.application.Application;
-import javafx.geometry.Insets;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import java.nio.file.Path;
 
+/**
+ * La classe principale de l'application Labyrinthe.
+ * Cette application permet de visualiser, générer et résoudre des labyrinthes.
+ * Elle utilise JavaFX pour l'interface utilisateur et charge le layout principal à partir d'un fichier FXML.
+ */
 public class LabyrintheApp extends Application {
-    private LabyrinthePane labyrinthePane;
-    private Maze maze;
 
+    /**
+     * Méthode de démarrage de l'application JavaFX.
+     * Elle est appelée lorsque l'application est lancée.
+     *
+     * @param stage La fenêtre principale (stage) de l'application.
+     * @throws Exception Si une erreur survient lors de l'initialisation.
+     */
     @Override
-    public void start(Stage stage) {
-        try {
-            maze = new Maze(Path.of("src/main/resources/maze1.txt"));
-            BorderPane root = new BorderPane();
-            labyrinthePane = new LabyrinthePane(maze);
+    public void start(Stage stage) throws Exception {
+        // Charge le fichier FXML pour le layout principal de l'interface utilisateur.
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fr/esisar/labyrinthe/view/MazeView.fxml"));
+        Parent root = loader.load();
 
-            // Contrôles
-            ComboBox<String> algorithmChoice = new ComboBox<>();
-            algorithmChoice.getItems().addAll("BFS", "DFS");
-            algorithmChoice.setValue("BFS");
+        // Crée une scène avec le layout chargé et définit les dimensions.
+        Scene scene = new Scene(root, 800, 600);
 
-            Button solveButton = new Button("Résoudre");
-            solveButton.setOnAction(e -> {
-                char[][] solvedGrid = switch (algorithmChoice.getValue()) {
-                    case "BFS" -> BFSSolver.solve(maze);
-                    case "DFS" -> DFSSolver.solve(maze);
-                    default -> throw new IllegalStateException();
-                };
-                labyrinthePane.updateGrid(solvedGrid);
-            });
+        // Configure la fenêtre principale (stage) avec un titre et la scène.
+        stage.setTitle("Résolveur de Labyrinthe");
+        stage.setScene(scene);
 
-            HBox controls = new HBox(10, algorithmChoice, solveButton);
-            controls.setPadding(new Insets(10));
-
-            root.setCenter(labyrinthePane);
-            root.setTop(controls);
-
-            stage.setTitle("Labyrinthe Project");
-            stage.setScene(new Scene(root, 800, 600));
-            stage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        // Affiche la fenêtre principale.
+        stage.show();
     }
 
+    /**
+     * Le point d'entrée principal de l'application.
+     * Cette méthode lance l'application JavaFX.
+     *
+     * @param args Les arguments de la ligne de commande (non utilisés).
+     */
     public static void main(String[] args) {
-        launch();
+        // Lance l'application JavaFX.
+        launch(args);
     }
 }

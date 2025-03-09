@@ -1,0 +1,36 @@
+.root {
+    -fx-base: #2D2D2D;
+    -fx-accent: #4CAF50;
+    -fx-default-button: #607D8B;
+    -fx-font-family: 'Segoe UI';
+}
+
+.tool-bar {
+    -fx-background-color: #37474F;
+    -fx-padding: 10;
+}
+
+.button {
+    -fx-background-radius: 5;
+    -fx-text-fill: white;
+    -fx-padding: 8 15;
+}
+
+.solve-btn {
+    -fx-background-color: #4CAF50;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 1);
+}
+
+.status-bar {
+    -fx-background-color: #263238;
+    -fx-padding: 5;
+    -fx-spacing: 10;
+}
+
+.canvas {
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
+}
+
+.check-box {
+    -fx-text-fill: #B0BEC5;
+}

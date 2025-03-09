@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.canvas.Canvas?>
+
+<?import java.net.URL?>
+<BorderPane xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="fr.esisar.labyrinthe.controller.MazeController">
+
+    <stylesheets>
+        <URL value="@/fr/esisar/labyrinthe/view/styles.css" />
+    </stylesheets>
+
+    <!-- Top Toolbar -->
+    <top>
+        <ToolBar>
+            <Button text="Charger" onAction="#handleLoadFile" />
+            <Button text="Générer" onAction="#handleGenerateMaze" />
+            <Separator />
+            <ComboBox fx:id="algorithmCombo" promptText="Choisir un algorithme" />
+            <Button text="Résoudre" onAction="#handleSolve" styleClass="solve-btn" />
+            <Separator />
+            <CheckBox fx:id="animationCheck" text="Animation en temps réel" />
+        </ToolBar>
+    </top>
+
+    <!-- Center: Canvas for maze -->
+    <center>
+        <ScrollPane fx:id="scrollPane">
+            <Canvas fx:id="mazeCanvas"
+                    width="800"
+                    height="600" />
+        </ScrollPane>
+    </center>
+
+    <!-- Bottom: Status Bar -->
+    <bottom>
+        <HBox styleClass="status-bar">
+            <Label fx:id="statusLabel" text="Prêt" />
+            <ProgressBar fx:id="progressBar" visible="false" />
+        </HBox>
+    </bottom>
+
+</BorderPane>
