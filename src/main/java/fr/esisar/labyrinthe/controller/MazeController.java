@@ -34,7 +34,9 @@ public class MazeController {
     private Maze maze;
     private GraphicsContext gc;
     private double cellSize = 30;
-    private AnimatedSolver animatedSolver;
+    private AnimatedBFSSolver animatedBFSSolver;
+    private AnimatedDFSSolver animatedDFSSolver;
+    private AnimatedAStarSolver animatedAStarSolver;
 
     /**
      * Initialise le contrôleur.
@@ -46,6 +48,10 @@ public class MazeController {
         algorithmCombo.getItems().addAll("BFS", "DFS", "A*");
         algorithmCombo.setValue("BFS"); // Algorithme par défaut
         progressBar.setProgress(0.0);
+
+        // Redimensionnement dynamique du canvas
+        mazeCanvas.widthProperty().addListener((obs, oldVal, newVal) -> drawMaze());
+        mazeCanvas.heightProperty().addListener((obs, oldVal, newVal) -> drawMaze());
     }
 
     /**
@@ -93,18 +99,19 @@ public class MazeController {
             showError("Erreur", "Veuillez sélectionner un algorithme.");
             return;
         }
-        if (animatedSolver!=null){
-            animatedSolver.stop();
-        }
+
+        // Arrêter toute animation en cours
+        if (animatedBFSSolver != null) animatedBFSSolver.stop();
+        if (animatedDFSSolver != null) animatedDFSSolver.stop();
+        if (animatedAStarSolver != null) animatedAStarSolver.stop();
+
         progressBar.setProgress(0.0);
+
         if (animationCheck.isSelected()) {
-
             solveWithAnimation();
-
         } else {
             solveWithoutAnimation();
         }
-
     }
 
     /**
@@ -130,26 +137,35 @@ public class MazeController {
         drawSolution(solvedGrid);
         statusLabel.setText("Labyrinthe résolu avec " + selectedAlgorithm);
     }
+
     /**
      * Résout le labyrinthe avec une animation.
      */
-    private void solveWithAnimation(){
-        animatedSolver = new AnimatedSolver(maze, gc, cellSize, progress -> {
-            progressBar.setProgress(progress);
-        });
+    private void solveWithAnimation() {
         CompletableFuture<char[][]> future;
         switch (algorithmCombo.getValue()) {
             case "BFS":
-                future = animatedSolver.solveBFS();
+                animatedBFSSolver = new AnimatedBFSSolver(maze, gc, cellSize, progress -> progressBar.setProgress(progress));
+                future = animatedBFSSolver.solveBFS();
+                break;
+            case "DFS":
+                animatedDFSSolver = new AnimatedDFSSolver(maze, gc, cellSize, progress -> progressBar.setProgress(progress));
+                future = animatedDFSSolver.solveDFS();
+                break;
+            case "A*":
+                animatedAStarSolver = new AnimatedAStarSolver(maze, gc, cellSize, progress -> progressBar.setProgress(progress));
+                future = animatedAStarSolver.solveAStar();
                 break;
             default:
                 showError("Erreur", "L'algorithme n'est pas supporté avec l'animation.");
                 return;
         }
+
         future.thenAccept(this::drawSolution).exceptionally(e -> {
-            showError("Erreur",e.getMessage());
+            showError("Erreur", e.getMessage());
             return null;
         });
+
         statusLabel.setText("Labyrinthe résolu avec " + algorithmCombo.getValue() + " (animation)");
     }
 
@@ -158,6 +174,10 @@ public class MazeController {
      */
     private void drawMaze() {
         gc.clearRect(0, 0, mazeCanvas.getWidth(), mazeCanvas.getHeight());
+        double cellWidth = mazeCanvas.getWidth() / maze.getCols();
+        double cellHeight = mazeCanvas.getHeight() / maze.getRows();
+        cellSize = Math.min(cellWidth, cellHeight);
+
         for (int i = 0; i < maze.getRows(); i++) {
             for (int j = 0; j < maze.getCols(); j++) {
                 gc.setFill(getCellColor(i, j, maze.getGrid()));

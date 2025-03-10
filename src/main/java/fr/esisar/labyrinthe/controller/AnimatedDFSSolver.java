@@ -11,49 +11,40 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 /**
- * Classe responsable de la résolution animée d'un labyrinthe.
- * Utilise l'algorithme de parcours en largeur (BFS) pour trouver le chemin
- * et anime le processus de recherche et de reconstruction du chemin sur un canvas.
+ * Classe responsable de la résolution animée d'un labyrinthe en utilisant l'algorithme DFS (Depth-First Search).
+ * Elle anime le processus de recherche et de reconstruction du chemin sur un canvas.
  */
-public class AnimatedSolver {
-    /**
-     * Directions possibles : haut, bas, gauche, droite.
-     */
+public class AnimatedDFSSolver {
+    // Directions possibles : haut, bas, gauche, droite
     private static final int[][] DIRECTIONS = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
-    /**
-     * Le labyrinthe à résoudre.
-     */
+
+    // Le labyrinthe à résoudre
     private final Maze maze;
-    /**
-     * Le contexte graphique sur lequel dessiner.
-     */
+
+    // Le contexte graphique sur lequel dessiner
     private final GraphicsContext gc;
-    /**
-     * La taille d'une cellule du labyrinthe en pixels.
-     */
+
+    // La taille d'une cellule du labyrinthe en pixels
     private final double cellSize;
-    /**
-     * Callback pour signaler la progression de la recherche.
-     */
+
+    // Callback pour signaler la progression de la recherche
     private final Consumer<Double> progressCallback;
-    /**
-     * Minuteur pour l'animation.
-     */
+
+    // Minuteur pour l'animation
     private AnimationTimer timer;
-    /**
-     * Indique si un algorithme de résolution est en cours.
-     */
+
+    // Indique si un algorithme de résolution est en cours
     private boolean isSolving = false;
 
     /**
-     * Constructeur de la classe AnimatedSolver.
+     * Constructeur de la classe AnimatedDFSSolver.
      *
      * @param maze             Le labyrinthe à résoudre.
      * @param gc               Le contexte graphique sur lequel dessiner.
      * @param cellSize         La taille d'une cellule du labyrinthe en pixels.
      * @param progressCallback Callback pour signaler la progression de la recherche (entre 0.0 et 1.0).
      */
-    public AnimatedSolver(Maze maze, GraphicsContext gc, double cellSize, Consumer<Double> progressCallback) {
+    public AnimatedDFSSolver(Maze maze, GraphicsContext gc, double cellSize, Consumer<Double> progressCallback) {
         this.maze = maze;
         this.gc = gc;
         this.cellSize = cellSize;
@@ -61,13 +52,13 @@ public class AnimatedSolver {
     }
 
     /**
-     * Résout le labyrinthe en utilisant l'algorithme de parcours en largeur (BFS), avec une animation.
+     * Résout le labyrinthe en utilisant l'algorithme DFS, avec une animation.
      *
      * @return Un CompletableFuture qui contiendra la grille résolue lorsque la résolution sera terminée.
      *         La grille contiendra le chemin marqué avec des '+'.
      * @throws IllegalStateException Si un autre algorithme de résolution est déjà en cours.
      */
-    public CompletableFuture<char[][]> solveBFS() {
+    public CompletableFuture<char[][]> solveDFS() {
         CompletableFuture<char[][]> future = new CompletableFuture<>();
         if (isSolving) {
             future.completeExceptionally(new IllegalStateException("Un algorithme de résolution est déjà en cours."));
@@ -81,12 +72,14 @@ public class AnimatedSolver {
         int rows = maze.getRows();
         int cols = maze.getCols();
 
-        Queue<Point> queue = new LinkedList<>();
-        Set<Point> visited = new HashSet<>();
+        // Utilisation d'une pile pour DFS
+        Stack<Point> stack = new Stack<>();
         Map<Point, Point> parent = new HashMap<>();
+        Set<Point> visited = new HashSet<>();
         List<Point> exploredCells = new ArrayList<>();
 
-        queue.add(start);
+        // Initialisation de la recherche DFS
+        stack.push(start);
         visited.add(start);
 
         timer = new AnimationTimer() {
@@ -98,14 +91,14 @@ public class AnimatedSolver {
                 if (now - lastUpdate < FRAME_DELAY) return;
                 lastUpdate = now;
 
-                if (queue.isEmpty()) {
+                if (stack.isEmpty()) {
                     this.stop();
                     char[][] result = reconstructPathAnimated(parent, end, future);
                     isSolving = false;
                     return;
                 }
 
-                Point current = queue.poll();
+                Point current = stack.pop();
                 exploredCells.add(current);
 
                 // Visualisation - afficher l'exploration
@@ -117,6 +110,7 @@ public class AnimatedSolver {
                 // Mettre à jour la progression
                 progressCallback.accept((double) exploredCells.size() / (rows * cols));
 
+                // Si l'arrivée est atteinte, reconstruire le chemin
                 if (current.equals(end)) {
                     this.stop();
                     char[][] result = reconstructPathAnimated(parent, end, future);
@@ -124,15 +118,17 @@ public class AnimatedSolver {
                     return;
                 }
 
+                // Explorer les voisins
                 for (int[] dir : DIRECTIONS) {
                     int nx = current.x() + dir[0];
                     int ny = current.y() + dir[1];
                     Point next = new Point(nx, ny);
 
+                    // Vérifier si le voisin est dans les limites et n'est pas un mur
                     if (nx >= 0 && nx < rows && ny >= 0 && ny < cols && !visited.contains(next) && grid[nx][ny] != '#') {
                         visited.add(next);
                         parent.put(next, current);
-                        queue.add(next);
+                        stack.push(next);
                     }
                 }
             }

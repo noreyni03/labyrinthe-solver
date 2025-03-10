@@ -1,36 +1,85 @@
+/* styles.css - Thème moderne */
+
 .root {
     -fx-base: #2D2D2D;
+    -fx-background: #1E1E1E;
     -fx-accent: #4CAF50;
-    -fx-default-button: #607D8B;
-    -fx-font-family: 'Segoe UI';
+    -fx-default-button: #3C3F41;
+    -fx-font-family: 'Segoe UI', sans-serif;
 }
 
+/* ToolBar modernisée */
 .tool-bar {
     -fx-background-color: #37474F;
-    -fx-padding: 10;
+    -fx-padding: 10px;
+    -fx-spacing: 15px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.2), 5, 0, 0, 1);
 }
 
+/* Boutons stylisés */
 .button {
-    -fx-background-radius: 5;
+    -fx-background-radius: 5px;
+    -fx-padding: 8px 16px;
     -fx-text-fill: white;
-    -fx-padding: 8 15;
+    -fx-background-color: linear-gradient(to bottom, #4CAF50, #45A049);
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
 }
 
-.solve-btn {
+.button:hover {
+    -fx-background-color: linear-gradient(to bottom, #45A049, #3D8B40);
+    -fx-effect: dropshadow(three-pass-box, rgba(76,175,80,0.3), 10, 0, 0, 0);
+}
+
+/* ComboBox modernisée */
+.combo-box {
+    -fx-background-color: #37474F;
+    -fx-text-fill: white;
+    -fx-prompt-text-fill: #B0BEC5;
+    -fx-border-color: #4CAF50;
+    -fx-border-radius: 5px;
+}
+
+.combo-box .list-cell {
+    -fx-background-color: #37474F;
+    -fx-text-fill: white;
+}
+
+/* CheckBox stylisée */
+.check-box {
+    -fx-text-fill: #B0BEC5;
+    -fx-font-size: 14px;
+}
+
+.check-box .box {
+    -fx-background-color: #37474F;
+    -fx-border-color: #4CAF50;
+    -fx-border-radius: 3px;
+}
+
+.check-box:selected .mark {
     -fx-background-color: #4CAF50;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 5, 0, 0, 1);
 }
 
-.status-bar {
-    -fx-background-color: #263238;
-    -fx-padding: 5;
-    -fx-spacing: 10;
-}
-
+/* Canvas avec bordure et ombre */
 .canvas {
+    -fx-border-color: #4CAF50;
+    -fx-border-width: 2px;
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, 0, 0);
 }
 
-.check-box {
+/* Barre de progression */
+.progress-bar {
+    -fx-accent: #4CAF50;
+    -fx-background-color: #37474F;
+    -fx-pref-height: 8px;
+}
+
+/* Status Bar */
+.status-bar {
+    -fx-background-color: #263238;
+    -fx-padding: 8px;
+    -fx-spacing: 10px;
+    -fx-font-size: 14px;
     -fx-text-fill: #B0BEC5;
 }

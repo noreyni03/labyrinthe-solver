@@ -2,44 +2,96 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.canvas.Canvas?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.FontWeight?>
 
-<?import java.net.URL?>
 <BorderPane xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="fr.esisar.labyrinthe.controller.MazeController">
+            fx:controller="fr.esisar.labyrinthe.controller.MazeController"
+            stylesheets="@/fr/esisar/labyrinthe/view/styles.css">
 
-    <stylesheets>
-        <URL value="@/fr/esisar/labyrinthe/view/styles.css" />
-    </stylesheets>
-
-    <!-- Top Toolbar -->
+    <!-- Top: ToolBar organisée -->
     <top>
         <ToolBar>
-            <Button text="Charger" onAction="#handleLoadFile" />
-            <Button text="Générer" onAction="#handleGenerateMaze" />
-            <Separator />
-            <ComboBox fx:id="algorithmCombo" promptText="Choisir un algorithme" />
-            <Button text="Résoudre" onAction="#handleSolve" styleClass="solve-btn" />
-            <Separator />
-            <CheckBox fx:id="animationCheck" text="Animation en temps réel" />
+            <!-- Section Fichier -->
+            <Button text="Charger" onAction="#handleLoadFile">
+                <tooltip>
+                    <Tooltip text="Charger un labyrinthe depuis un fichier" />
+                </tooltip>
+                <graphic>
+                    <Label style="-fx-text-fill: white;">📂</Label>
+                </graphic>
+            </Button>
+            <Button text="Générer" onAction="#handleGenerateMaze">
+                <tooltip>
+                    <Tooltip text="Générer un labyrinthe aléatoire" />
+                </tooltip>
+                <graphic>
+                    <Label style="-fx-text-fill: white;">🎲</Label>
+                </graphic>
+            </Button>
+            <Separator orientation="VERTICAL" />
+
+            <!-- Section Algorithme -->
+            <Label text="Algorithme:" style="-fx-text-fill: white; -fx-padding: 0 10 0 0;" />
+            <ComboBox fx:id="algorithmCombo" promptText="Choisir..." prefWidth="120">
+                <tooltip>
+                    <Tooltip text="Sélectionnez un algorithme de résolution" />
+                </tooltip>
+            </ComboBox>
+            <Button text="Résoudre" onAction="#handleSolve" styleClass="solve-btn">
+                <tooltip>
+                    <Tooltip text="Résoudre le labyrinthe" />
+                </tooltip>
+                <graphic>
+                    <Label style="-fx-text-fill: white;">⚡</Label>
+                </graphic>
+            </Button>
+            <Separator orientation="VERTICAL" />
+
+            <!-- Section Animation -->
+            <CheckBox fx:id="animationCheck" text="Animation">
+                <tooltip>
+                    <Tooltip text="Activer/désactiver l'animation" />
+                </tooltip>
+            </CheckBox>
+
+            <!-- Espaceur pour alignement -->
+            <Region HBox.hgrow="ALWAYS" />
+
+            <!-- Section Aide -->
+            <Button text="?">
+                <tooltip>
+                    <Tooltip text="Aide" />
+                </tooltip>
+                <graphic>
+                    <Label style="-fx-text-fill: white;">❔</Label>
+                </graphic>
+            </Button>
         </ToolBar>
     </top>
 
-    <!-- Center: Canvas for maze -->
+    <!-- Center: Canvas adaptatif -->
     <center>
-        <ScrollPane fx:id="scrollPane">
+        <ScrollPane fx:id="scrollPane" fitToWidth="true" fitToHeight="true">
             <Canvas fx:id="mazeCanvas"
                     width="800"
-                    height="600" />
+                    height="600"
+                    styleClass="canvas" />
         </ScrollPane>
     </center>
 
     <!-- Bottom: Status Bar -->
     <bottom>
-        <HBox styleClass="status-bar">
+        <HBox styleClass="status-bar" spacing="10" alignment="CENTER_LEFT">
             <Label fx:id="statusLabel" text="Prêt" />
-            <ProgressBar fx:id="progressBar" visible="false" />
+            <ProgressBar fx:id="progressBar" prefWidth="200" />
         </HBox>
     </bottom>
 
+    <!-- Padding général -->
+    <padding>
+        <Insets top="5" right="10" bottom="5" left="10" />
+    </padding>
 </BorderPane>
