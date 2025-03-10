@@ -5,7 +5,10 @@ import fr.esisar.labyrinthe.algorithm.DFSSolver;
 import fr.esisar.labyrinthe.algorithm.AStarSolver;
 import fr.esisar.labyrinthe.model.Maze;
 import fr.esisar.labyrinthe.generator.MazeGenerator;
+import fr.esisar.labyrinthe.model.MazeAnalyzer;
+import fr.esisar.labyrinthe.ui.AlgorithmComparisonView;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
@@ -15,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -52,6 +56,22 @@ public class MazeController {
         // Redimensionnement dynamique du canvas
         mazeCanvas.widthProperty().addListener((obs, oldVal, newVal) -> drawMaze());
         mazeCanvas.heightProperty().addListener((obs, oldVal, newVal) -> drawMaze());
+    }
+
+    @FXML
+    private void handleCompareAlgorithms() {
+        if (maze == null) {
+            showError("Erreur", "Aucun labyrinthe chargé ou généré.");
+            return;
+        }
+
+        MazeAnalyzer analyzer = new MazeAnalyzer(maze);
+        AlgorithmComparisonView comparisonView = new AlgorithmComparisonView(analyzer);
+
+        Stage stage = new Stage();
+        stage.setTitle("Comparaison des Algorithmes");
+        stage.setScene(new Scene(comparisonView, 800, 600));
+        stage.show();
     }
 
     /**

@@ -48,6 +48,14 @@
                     <Label style="-fx-text-fill: white;">⚡</Label>
                 </graphic>
             </Button>
+            <Button text="Comparer" onAction="#handleCompareAlgorithms">
+                <tooltip>
+                    <Tooltip text="Comparer les performances des algorithmes" />
+                </tooltip>
+                <graphic>
+                    <Label style="-fx-text-fill: white;">📊</Label>
+                </graphic>
+            </Button>
             <Separator orientation="VERTICAL" />
 
             <!-- Section Animation -->
