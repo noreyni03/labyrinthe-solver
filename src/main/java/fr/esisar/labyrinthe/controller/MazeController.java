@@ -37,7 +37,7 @@ public class MazeController {
 
     private Maze maze;
     private GraphicsContext gc;
-    private double cellSize = 30;
+    private double cellSize;
     private AnimatedBFSSolver animatedBFSSolver;
     private AnimatedDFSSolver animatedDFSSolver;
     private AnimatedAStarSolver animatedAStarSolver;
@@ -58,6 +58,9 @@ public class MazeController {
         mazeCanvas.heightProperty().addListener((obs, oldVal, newVal) -> drawMaze());
     }
 
+    /**
+     * Ouvre une fenêtre pour comparer les performances des algorithmes.
+     */
     @FXML
     private void handleCompareAlgorithms() {
         if (maze == null) {
@@ -190,33 +193,65 @@ public class MazeController {
     }
 
     /**
-     * Dessine le labyrinthe sur le canvas.
+     * Dessine le labyrinthe sur le canvas, centré.
      */
     private void drawMaze() {
+        if (maze == null) return;
+
         gc.clearRect(0, 0, mazeCanvas.getWidth(), mazeCanvas.getHeight());
+
+        // Calculer la taille des cellules
         double cellWidth = mazeCanvas.getWidth() / maze.getCols();
         double cellHeight = mazeCanvas.getHeight() / maze.getRows();
         cellSize = Math.min(cellWidth, cellHeight);
 
+        // Calculer les marges pour centrer le labyrinthe
+        double offsetX = (mazeCanvas.getWidth() - (maze.getCols() * cellSize)) / 2;
+        double offsetY = (mazeCanvas.getHeight() - (maze.getRows() * cellSize)) / 2;
+
+        // Dessiner le labyrinthe
         for (int i = 0; i < maze.getRows(); i++) {
             for (int j = 0; j < maze.getCols(); j++) {
                 gc.setFill(getCellColor(i, j, maze.getGrid()));
-                gc.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
+                gc.fillRect(
+                        offsetX + j * cellSize, // Position X centrée
+                        offsetY + i * cellSize, // Position Y centrée
+                        cellSize,
+                        cellSize
+                );
             }
         }
     }
 
     /**
-     * Dessine le labyrinthe résolu sur le canvas.
+     * Dessine le labyrinthe résolu sur le canvas, centré.
      *
      * @param solvedGrid La grille résolue à dessiner.
      */
     private void drawSolution(char[][] solvedGrid) {
+        if (maze == null) return;
+
         gc.clearRect(0, 0, mazeCanvas.getWidth(), mazeCanvas.getHeight());
+
+        // Calculer la taille des cellules
+        double cellWidth = mazeCanvas.getWidth() / maze.getCols();
+        double cellHeight = mazeCanvas.getHeight() / maze.getRows();
+        cellSize = Math.min(cellWidth, cellHeight);
+
+        // Calculer les marges pour centrer le labyrinthe
+        double offsetX = (mazeCanvas.getWidth() - (maze.getCols() * cellSize)) / 2;
+        double offsetY = (mazeCanvas.getHeight() - (maze.getRows() * cellSize)) / 2;
+
+        // Dessiner le labyrinthe résolu
         for (int i = 0; i < maze.getRows(); i++) {
             for (int j = 0; j < maze.getCols(); j++) {
                 gc.setFill(getCellColor(i, j, solvedGrid));
-                gc.fillRect(j * cellSize, i * cellSize, cellSize, cellSize);
+                gc.fillRect(
+                        offsetX + j * cellSize, // Position X centrée
+                        offsetY + i * cellSize, // Position Y centrée
+                        cellSize,
+                        cellSize
+                );
             }
         }
     }
