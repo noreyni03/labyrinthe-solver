@@ -27,6 +27,12 @@ public class AnimatedAStarSolver {
     // La taille d'une cellule du labyrinthe en pixels
     private final double cellSize;
 
+    // Décalage horizontal pour centrer le labyrinthe
+    private final double offsetX;
+
+    // Décalage vertical pour centrer le labyrinthe
+    private final double offsetY;
+
     // Callback pour signaler la progression de la recherche
     private final Consumer<Double> progressCallback;
 
@@ -42,12 +48,16 @@ public class AnimatedAStarSolver {
      * @param maze             Le labyrinthe à résoudre.
      * @param gc               Le contexte graphique sur lequel dessiner.
      * @param cellSize         La taille d'une cellule du labyrinthe en pixels.
+     * @param offsetX          Décalage horizontal pour centrer le labyrinthe.
+     * @param offsetY          Décalage vertical pour centrer le labyrinthe.
      * @param progressCallback Callback pour signaler la progression de la recherche (entre 0.0 et 1.0).
      */
-    public AnimatedAStarSolver(Maze maze, GraphicsContext gc, double cellSize, Consumer<Double> progressCallback) {
+    public AnimatedAStarSolver(Maze maze, GraphicsContext gc, double cellSize, double offsetX, double offsetY, Consumer<Double> progressCallback) {
         this.maze = maze;
         this.gc = gc;
         this.cellSize = cellSize;
+        this.offsetX = offsetX;
+        this.offsetY = offsetY;
         this.progressCallback = progressCallback;
     }
 
@@ -108,10 +118,10 @@ public class AnimatedAStarSolver {
                 Point current = openSet.poll();
                 exploredCells.add(current);
 
-                // Visualisation - afficher l'exploration
+                // Visualisation - afficher l'exploration avec décalage
                 if (!current.equals(start) && !current.equals(end)) {
                     gc.setFill(Color.LIGHTBLUE);
-                    gc.fillRect(current.y() * cellSize, current.x() * cellSize, cellSize, cellSize);
+                    gc.fillRect(offsetX + current.y() * cellSize, offsetY + current.x() * cellSize, cellSize, cellSize);
                 }
 
                 // Mettre à jour la progression
@@ -166,7 +176,7 @@ public class AnimatedAStarSolver {
     }
 
     /**
-     * Reconstruit et anime le chemin à partir du tableau des parents (`cameFrom`).
+     * Reconstruit et anime le chemin à partir de la map `cameFrom`.
      *
      * @param cameFrom La map traçant le chemin.
      * @param end      Le point d'arrivée.
@@ -210,15 +220,15 @@ public class AnimatedAStarSolver {
                 Point p = path.get(index[0]);
                 grid[p.x()][p.y()] = '+';
 
-                // Dessiner le segment du chemin
+                // Dessiner le segment du chemin avec décalage
                 gc.setFill(Color.YELLOW);
-                gc.fillRect(p.y() * cellSize, p.x() * cellSize, cellSize, cellSize);
+                gc.fillRect(offsetX + p.y() * cellSize, offsetY + p.x() * cellSize, cellSize, cellSize);
 
-                // Mettre en évidence le début et la fin
+                // Mettre en évidence le début et la fin avec décalage
                 gc.setFill(Color.GREEN);
-                gc.fillRect(maze.getStart().y() * cellSize, maze.getStart().x() * cellSize, cellSize, cellSize);
+                gc.fillRect(offsetX + maze.getStart().y() * cellSize, offsetY + maze.getStart().x() * cellSize, cellSize, cellSize);
                 gc.setFill(Color.RED);
-                gc.fillRect(maze.getEnd().y() * cellSize, maze.getEnd().x() * cellSize, cellSize, cellSize);
+                gc.fillRect(offsetX + maze.getEnd().y() * cellSize, offsetY + maze.getEnd().x() * cellSize, cellSize, cellSize);
 
                 index[0]++;
             }

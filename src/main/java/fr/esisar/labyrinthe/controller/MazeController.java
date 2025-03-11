@@ -25,6 +25,7 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.concurrent.CompletableFuture;
+import java.util.function.Consumer;
 
 /**
  * Contrôleur pour l'application de résolution de labyrinthes.
@@ -140,8 +141,15 @@ public class MazeController {
 
         progressBar.setProgress(0.0);
 
+        // Calculer la taille des cellules et les décalages pour centrer le labyrinthe
+        double cellWidth = mazeCanvas.getWidth() / maze.getCols();
+        double cellHeight = mazeCanvas.getHeight() / maze.getRows();
+        cellSize = Math.min(cellWidth, cellHeight);
+        double offsetX = (mazeCanvas.getWidth() - (maze.getCols() * cellSize)) / 2;
+        double offsetY = (mazeCanvas.getHeight() - (maze.getRows() * cellSize)) / 2;
+
         if (animationCheck.isSelected()) {
-            solveWithAnimation();
+            solveWithAnimation(offsetX, offsetY);
         } else {
             solveWithoutAnimation();
         }
@@ -174,19 +182,19 @@ public class MazeController {
     /**
      * Résout le labyrinthe avec une animation.
      */
-    private void solveWithAnimation() {
+    private void solveWithAnimation(double offsetX, double offsetY) {
         CompletableFuture<char[][]> future;
         switch (algorithmCombo.getValue()) {
             case "BFS":
-                animatedBFSSolver = new AnimatedBFSSolver(maze, gc, cellSize, progress -> progressBar.setProgress(progress));
+                animatedBFSSolver = new AnimatedBFSSolver(maze, gc, cellSize, offsetX, offsetY, progress -> progressBar.setProgress(progress));
                 future = animatedBFSSolver.solveBFS();
                 break;
             case "DFS":
-                animatedDFSSolver = new AnimatedDFSSolver(maze, gc, cellSize, progress -> progressBar.setProgress(progress));
+                animatedDFSSolver = new AnimatedDFSSolver(maze, gc, cellSize, offsetX, offsetY, progress -> progressBar.setProgress(progress));
                 future = animatedDFSSolver.solveDFS();
                 break;
             case "A*":
-                animatedAStarSolver = new AnimatedAStarSolver(maze, gc, cellSize, progress -> progressBar.setProgress(progress));
+                animatedAStarSolver = new AnimatedAStarSolver(maze, gc, cellSize, offsetX, offsetY, progress -> progressBar.setProgress(progress));
                 future = animatedAStarSolver.solveAStar();
                 break;
             default:

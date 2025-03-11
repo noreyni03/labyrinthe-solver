@@ -85,7 +85,7 @@
     <!-- Center: Canvas adaptatif -->
     <center>
         <ScrollPane fx:id="scrollPane" fitToWidth="true" fitToHeight="true">
-            <StackPane>
+            <StackPane alignment="CENTER">
                 <Canvas fx:id="mazeCanvas" styleClass="canvas" />
             </StackPane>
         </ScrollPane>
