@@ -16,6 +16,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -26,9 +28,9 @@ import java.util.concurrent.CompletableFuture;
 
 /**
  * Contrôleur pour l'application de résolution de labyrinthes.
- * Gère les interactions de l'interface utilisateur et les opérations sur les labyrinthes.
  */
 public class MazeController {
+    @FXML private ScrollPane scrollPane;
     @FXML private Canvas mazeCanvas;
     @FXML private ComboBox<String> algorithmCombo;
     @FXML private CheckBox animationCheck;
@@ -44,7 +46,6 @@ public class MazeController {
 
     /**
      * Initialise le contrôleur.
-     * Configure le canvas et la boîte de sélection d'algorithme.
      */
     @FXML
     public void initialize() {
@@ -53,9 +54,18 @@ public class MazeController {
         algorithmCombo.setValue("BFS"); // Algorithme par défaut
         progressBar.setProgress(0.0);
 
-        // Redimensionnement dynamique du canvas
-        mazeCanvas.widthProperty().addListener((obs, oldVal, newVal) -> drawMaze());
-        mazeCanvas.heightProperty().addListener((obs, oldVal, newVal) -> drawMaze());
+        // Lier la taille du Canvas à la ScrollPane
+        mazeCanvas.widthProperty().bind(
+                scrollPane.widthProperty()
+                        .subtract(scrollPane.getPadding().getLeft() + scrollPane.getPadding().getRight())
+        );
+        mazeCanvas.heightProperty().bind(
+                scrollPane.heightProperty()
+                        .subtract(scrollPane.getPadding().getTop() + scrollPane.getPadding().getBottom())
+        );
+
+        // Redessiner lors du redimensionnement
+        scrollPane.viewportBoundsProperty().addListener((obs, oldVal, newVal) -> drawMaze());
     }
 
     /**
@@ -214,8 +224,8 @@ public class MazeController {
             for (int j = 0; j < maze.getCols(); j++) {
                 gc.setFill(getCellColor(i, j, maze.getGrid()));
                 gc.fillRect(
-                        offsetX + j * cellSize, // Position X centrée
-                        offsetY + i * cellSize, // Position Y centrée
+                        offsetX + j * cellSize,
+                        offsetY + i * cellSize,
                         cellSize,
                         cellSize
                 );
@@ -247,8 +257,8 @@ public class MazeController {
             for (int j = 0; j < maze.getCols(); j++) {
                 gc.setFill(getCellColor(i, j, solvedGrid));
                 gc.fillRect(
-                        offsetX + j * cellSize, // Position X centrée
-                        offsetY + i * cellSize, // Position Y centrée
+                        offsetX + j * cellSize,
+                        offsetY + i * cellSize,
                         cellSize,
                         cellSize
                 );

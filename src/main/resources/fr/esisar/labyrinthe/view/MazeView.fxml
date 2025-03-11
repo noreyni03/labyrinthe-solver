@@ -48,14 +48,6 @@
                     <Label style="-fx-text-fill: white;">⚡</Label>
                 </graphic>
             </Button>
-            <Button text="Comparer" onAction="#handleCompareAlgorithms">
-                <tooltip>
-                    <Tooltip text="Comparer les performances des algorithmes" />
-                </tooltip>
-                <graphic>
-                    <Label style="-fx-text-fill: white;">📊</Label>
-                </graphic>
-            </Button>
             <Separator orientation="VERTICAL" />
 
             <!-- Section Animation -->
@@ -67,6 +59,16 @@
 
             <!-- Espaceur pour alignement -->
             <Region HBox.hgrow="ALWAYS" />
+
+            <!-- Section Comparaison -->
+            <Button text="Comparer" onAction="#handleCompareAlgorithms">
+                <tooltip>
+                    <Tooltip text="Comparer les performances des algorithmes" />
+                </tooltip>
+                <graphic>
+                    <Label style="-fx-text-fill: white;">📊</Label>
+                </graphic>
+            </Button>
 
             <!-- Section Aide -->
             <Button text="?">
@@ -83,10 +85,9 @@
     <!-- Center: Canvas adaptatif -->
     <center>
         <ScrollPane fx:id="scrollPane" fitToWidth="true" fitToHeight="true">
-            <Canvas fx:id="mazeCanvas"
-                    width="800"
-                    height="600"
-                    styleClass="canvas" />
+            <StackPane>
+                <Canvas fx:id="mazeCanvas" styleClass="canvas" />
+            </StackPane>
         </ScrollPane>
     </center>
 
