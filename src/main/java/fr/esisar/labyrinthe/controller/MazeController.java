@@ -89,6 +89,54 @@ public class MazeController {
     }
 
     /**
+     * Affiche un guide d'utilisation expliquant comment utiliser l'application.
+     */
+    @FXML
+    private void handleHelp() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Guide d'Utilisation");
+        alert.setHeaderText("Comment utiliser l'application Labyrinthe Solver");
+
+        String guideText =
+                "Bienvenue dans l'application Labyrinthe Solver !\n\n" +
+                        "Voici comment utiliser les différentes fonctionnalités :\n\n" +
+                        "1. **Charger un labyrinthe :**\n" +
+                        "   - Cliquez sur le bouton 'Charger' (l'icône de dossier).\n" +
+                        "   - Sélectionnez un fichier texte (.txt) représentant votre labyrinthe.\n" +
+                        "   - Le labyrinthe s'affichera dans la zone centrale.\n\n" +
+                        "   *Format du fichier texte :*\n" +
+                        "     '#' représente un mur, ' ' un chemin, 'S' le point de départ, et 'E' le point d'arrivée.\n" +
+                        "    Assurez-vous que le labyrinthe est rectangulaire (toutes les lignes ont la même longueur).\n\n" +
+
+                        "2. **Générer un labyrinthe :**\n" +
+                        "   - Cliquez sur le bouton 'Générer' (l'icône de dés).\n" +
+                        "   - Un labyrinthe aléatoire sera créé et affiché.\n\n" +
+
+                        "3. **Résoudre le labyrinthe :**\n" +
+                        "   - Sélectionnez un algorithme dans la liste déroulante ('BFS', 'DFS', ou 'A*').\n" +
+                        "   - Si vous souhaitez voir la résolution étape par étape, cochez la case 'Animation'.\n" +
+                        "   - Cliquez sur le bouton 'Résoudre' (l'icône d'éclair).\n" +
+                        "   - Le chemin trouvé sera affiché en jaune.\n\n" +
+
+                        "4. **Comparer les algorithmes :**\n" +
+                        "   - Cliquez sur le bouton 'Comparer' (l'icône de graphique).\n" +
+                        "   - Une nouvelle fenêtre s'ouvrira, affichant les statistiques de performance de chaque algorithme (nombre d'étapes, temps d'exécution, longueur du chemin).\n\n" +
+
+                        "5. **Barre de statut :**\n" +
+                        "   - La barre en bas de la fenêtre affiche l'état actuel de l'application (par exemple, 'Prêt', 'Labyrinthe chargé', 'Labyrinthe résolu').\n" +
+                        "   - La barre de progression montre l'avancement de l'animation (si activée).\n\n" +
+
+                        "Conseils :\n" +
+                        "- Vous pouvez zoomer et vous déplacer dans le labyrinthe en utilisant la molette de la souris et les barres de défilement.\n" +
+                        "- Si une erreur survient, une boîte de dialogue s'affichera avec des informations sur le problème.";
+
+
+        alert.setContentText(guideText);
+        alert.getDialogPane().setMinWidth(600); // Ajuste la largeur pour une meilleure lisibilité
+        alert.showAndWait();
+    }
+
+    /**
      * Gère le chargement d'un labyrinthe à partir d'un fichier.
      */
     @FXML

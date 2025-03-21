@@ -71,7 +71,7 @@
             </Button>
 
             <!-- Section Aide -->
-            <Button text="?">
+            <Button text="?" onAction="#handleHelp">
                 <tooltip>
                     <Tooltip text="Aide" />
                 </tooltip>
